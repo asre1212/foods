@@ -1,0 +1,675 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#e5e5e0">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Taste Gazette">
+  <title>The Taste Gazette</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' fill='%23111111'/%3E%3Crect x='32' y='36' width='116' height='108' fill='%23f9f9f7'/%3E%3Cpath d='M50 64h80M50 84h80M50 104h48' stroke='%23111111' stroke-width='8'/%3E%3Ccircle cx='118' cy='113' r='17' fill='%23cc0000'/%3E%3Cpath d='M109 113h18M118 104v18' stroke='%23f9f9f7' stroke-width='6' stroke-linecap='round'/%3E%3C/svg%3E">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' fill='%23111111'/%3E%3Crect x='32' y='36' width='116' height='108' fill='%23f9f9f7'/%3E%3Cpath d='M50 64h80M50 84h80M50 104h48' stroke='%23111111' stroke-width='8'/%3E%3Ccircle cx='118' cy='113' r='17' fill='%23cc0000'/%3E%3Cpath d='M109 113h18M118 104v18' stroke='%23f9f9f7' stroke-width='6' stroke-linecap='round'/%3E%3C/svg%3E">
+  <style>
+    * { box-sizing: border-box; }
+    :root {
+      --bg: #f9f9f7;
+      --mast: #e5e5e0;
+      --panel: #f0f0ee;
+      --ink: #111;
+      --muted: #737373;
+      --red: #c00;
+      --gold: #b77c38;
+      --green: #466f58;
+      --danger: #a40018;
+      color-scheme: light;
+      font-family: Inter, "Helvetica Neue", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    html, body { min-height: 100%; margin: 0; background: var(--bg); color: var(--ink); }
+    body { -webkit-font-smoothing: antialiased; letter-spacing: 0; }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: 99;
+      pointer-events: none;
+      opacity: .36;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.07'/%3E%3C/svg%3E");
+    }
+    button, input, textarea { font: inherit; }
+    button { border: 0; border-radius: 0; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+    .app {
+      width: min(100%, 430px);
+      min-height: 100vh;
+      margin: 0 auto;
+      background: var(--bg);
+      border-inline: 1px solid rgba(17, 17, 17, .08);
+      padding-bottom: max(14px, env(safe-area-inset-bottom));
+    }
+    .masthead {
+      display: grid;
+      grid-template-columns: 44px 1fr auto;
+      gap: 12px;
+      align-items: center;
+      padding: max(14px, env(safe-area-inset-top)) 16px 12px;
+      background: var(--mast);
+      border-bottom: 4px solid var(--ink);
+    }
+    .app-icon { width: 44px; height: 44px; display: block; }
+    .overline {
+      margin-bottom: 2px;
+      color: var(--red);
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+    }
+    h1 {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 29px;
+      line-height: .95;
+      font-weight: 900;
+      letter-spacing: -.4px;
+    }
+    .dateline {
+      margin-top: 5px;
+      color: #525252;
+      font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
+      font-size: 9px;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+    .gear {
+      width: 38px;
+      height: 38px;
+      background: transparent;
+      color: var(--ink);
+      border: 1px solid var(--ink);
+    }
+    .gear svg, .mini svg { width: 19px; height: 19px; stroke-width: 2.3; }
+    .tabbar {
+      display: flex;
+      overflow-x: auto;
+      border-bottom: 4px solid var(--ink);
+      scrollbar-width: none;
+      background: var(--bg);
+      position: sticky;
+      top: 0;
+      z-index: 4;
+    }
+    .tabbar::-webkit-scrollbar { display: none; }
+    .tab {
+      flex: 0 0 auto;
+      min-width: 112px;
+      max-width: 180px;
+      height: 44px;
+      padding: 0 12px;
+      background: var(--bg);
+      border-right: 1px solid var(--ink);
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      position: relative;
+      white-space: nowrap;
+    }
+    .tab span:first-child { display: inline-block; max-width: 110px; overflow: hidden; text-overflow: ellipsis; vertical-align: bottom; }
+    .tab em { font-style: normal; color: inherit; opacity: .72; margin-left: 5px; }
+    .tab[aria-selected="true"] { color: var(--bg); background: var(--ink); }
+    .tab[aria-selected="true"]::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -4px;
+      height: 4px;
+      background: var(--red);
+    }
+    .addbar {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      padding: 10px 16px;
+      background: var(--panel);
+      border-bottom: 1px solid var(--ink);
+    }
+    .btn {
+      min-height: 36px;
+      padding: 0 12px;
+      background: var(--ink);
+      color: var(--bg);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+    .btn.secondary { background: transparent; color: var(--ink); border: 1px solid var(--ink); }
+    .stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border-bottom: 1px solid var(--ink);
+    }
+    .stat {
+      min-height: 70px;
+      padding: 12px 16px;
+      border-right: 1px solid var(--ink);
+    }
+    .stat:last-child { border-right: 0; }
+    .stat strong {
+      display: block;
+      margin-bottom: 7px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 27px;
+      line-height: 1;
+    }
+    .stat span, .section-note {
+      color: var(--muted);
+      font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+    }
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 12px;
+      padding: 13px 16px 10px;
+    }
+    h2 {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 23px;
+      line-height: 1;
+    }
+    .list { border-top: 1px solid var(--ink); }
+    .item {
+      display: grid;
+      grid-template-columns: 40px minmax(0, 1fr) auto;
+      gap: 12px;
+      padding: 13px 16px;
+      border-bottom: 1px solid var(--ink);
+      background: var(--bg);
+    }
+    .item:active { background: var(--panel); }
+    .rank {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border: 1px solid var(--ink);
+      font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
+      font-size: 13px;
+      font-weight: 800;
+    }
+    .name {
+      margin: 0;
+      overflow-wrap: anywhere;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 18px;
+      line-height: 1.18;
+    }
+    .note {
+      margin: 5px 0 0;
+      color: var(--muted);
+      overflow-wrap: anywhere;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 13px;
+      font-style: italic;
+      line-height: 1.35;
+    }
+    .scorebox { text-align: right; min-width: 62px; }
+    .score {
+      font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
+      font-size: 18px;
+      font-weight: 800;
+      line-height: 1;
+    }
+    .marks { margin-top: 6px; color: var(--gold); font-size: 12px; letter-spacing: 0; }
+    .actions {
+      grid-column: 2 / 4;
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 1px;
+    }
+    .mini {
+      width: 38px;
+      height: 32px;
+      background: transparent;
+      color: var(--ink);
+      border: 1px solid var(--ink);
+    }
+    .mini.danger { color: var(--danger); }
+    .empty {
+      display: grid;
+      place-items: center;
+      min-height: 230px;
+      margin: 16px;
+      padding: 26px;
+      text-align: center;
+      background: var(--panel);
+      border: 1px dashed var(--ink);
+    }
+    .empty strong {
+      display: block;
+      margin-bottom: 6px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 19px;
+    }
+    .empty span { color: var(--muted); font-size: 14px; line-height: 1.45; }
+    dialog {
+      width: min(calc(100vw - 28px), 408px);
+      padding: 0;
+      border: 1px solid var(--ink);
+      border-radius: 0;
+      color: var(--ink);
+      background: var(--bg);
+      box-shadow: 0 20px 50px rgba(17, 17, 17, .26);
+    }
+    dialog::backdrop { background: rgba(17, 17, 17, .42); backdrop-filter: blur(4px); }
+    form, .sheet { padding: 16px; }
+    .modal-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin: -16px -16px 16px;
+      padding: 12px 16px;
+      background: var(--mast);
+      border-bottom: 4px solid var(--ink);
+    }
+    .modal-title {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 23px;
+      line-height: 1;
+    }
+    .close { width: 34px; height: 34px; background: transparent; border: 1px solid var(--ink); }
+    .field { display: grid; gap: 7px; margin-bottom: 13px; }
+    label {
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+    }
+    input, textarea {
+      width: 100%;
+      border: 1px solid var(--ink);
+      border-radius: 0;
+      outline: 0;
+      background: #fff;
+      color: var(--ink);
+    }
+    input { height: 46px; padding: 0 12px; }
+    textarea { min-height: 86px; resize: vertical; padding: 11px 12px; line-height: 1.35; }
+    input:focus, textarea:focus { box-shadow: 0 0 0 3px rgba(204, 0, 0, .18); }
+    .rating-row { display: grid; grid-template-columns: 1fr 68px; gap: 10px; align-items: center; }
+    input[type="range"] { height: 34px; padding: 0; border: 0; accent-color: var(--red); background: transparent; }
+    .readout {
+      display: grid;
+      place-items: center;
+      height: 42px;
+      background: var(--green);
+      color: var(--bg);
+      font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
+      font-weight: 800;
+    }
+    .form-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-top: 16px; }
+    .settings-row {
+      padding: 12px 0;
+      border-bottom: 1px solid var(--ink);
+    }
+    .settings-row:first-of-type { border-top: 1px solid var(--ink); }
+    .settings-title { font-weight: 800; font-size: 13px; letter-spacing: .05em; text-transform: uppercase; }
+    .settings-desc { margin: 5px 0 10px; color: var(--muted); font-size: 13px; line-height: 1.45; }
+    .file-input { display: none; }
+    @media (max-width: 355px) {
+      .masthead { grid-template-columns: 1fr auto; }
+      .app-icon { display: none; }
+      h1 { font-size: 26px; }
+      .item { grid-template-columns: 34px minmax(0, 1fr); }
+      .scorebox { grid-column: 2; text-align: left; }
+      .actions { grid-column: 1 / 3; }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="masthead">
+      <svg class="app-icon" viewBox="0 0 180 180" aria-hidden="true">
+        <rect width="180" height="180" fill="#111"/>
+        <rect x="32" y="36" width="116" height="108" fill="#f9f9f7"/>
+        <path d="M50 64h80M50 84h80M50 104h48" stroke="#111" stroke-width="8"/>
+        <circle cx="118" cy="113" r="17" fill="#c00"/>
+        <path d="M109 113h18M118 104v18" stroke="#f9f9f7" stroke-width="6" stroke-linecap="round"/>
+      </svg>
+      <div>
+        <div class="overline">Food rankings</div>
+        <h1>The Taste Gazette</h1>
+        <div class="dateline">Saved on this iPhone · highest first</div>
+      </div>
+      <button class="gear" id="openSettings" type="button" aria-label="Settings">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"/><path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1-2 3.4-.2-.1a1.7 1.7 0 0 0-1.9.1 8 8 0 0 1-1.6.9 1.6 1.6 0 0 0-1.1 1.5v.3H9v-.3a1.6 1.6 0 0 0-1.1-1.5 8 8 0 0 1-1.6-.9 1.7 1.7 0 0 0-1.9-.1l-.2.1-2-3.4.1-.1a1.6 1.6 0 0 0 .3-1.8 8 8 0 0 1 0-1.9 1.6 1.6 0 0 0-.3-1.8l-.1-.1 2-3.4.2.1a1.7 1.7 0 0 0 1.9-.1 8 8 0 0 1 1.6-.9A1.6 1.6 0 0 0 9 5.3V5h4v.3a1.6 1.6 0 0 0 1.1 1.5 8 8 0 0 1 1.6.9 1.7 1.7 0 0 0 1.9.1l.2-.1 2 3.4-.1.1a1.6 1.6 0 0 0-.3 1.8 8 8 0 0 1 0 2Z"/></svg>
+      </button>
+    </header>
+
+    <nav class="tabbar" id="tabs" aria-label="Food categories"></nav>
+
+    <section class="addbar">
+      <button class="btn" id="openItem" type="button">+ Log Food</button>
+      <button class="btn secondary" id="openCategoryTop" type="button">+ Category</button>
+    </section>
+
+    <section class="stats" aria-label="Overview">
+      <div class="stat"><strong id="totalTried">0</strong><span>Total Tried</span></div>
+      <div class="stat"><strong id="topScore">-</strong><span>Best Rating</span></div>
+    </section>
+
+    <section aria-live="polite">
+      <div class="section-head">
+        <h2 id="activeTitle">Category</h2>
+        <div class="section-note">Autosorted</div>
+      </div>
+      <div class="list" id="list"></div>
+    </section>
+  </main>
+
+  <dialog id="categoryDialog">
+    <form id="categoryForm" method="dialog">
+      <div class="modal-head">
+        <h3 class="modal-title">New category</h3>
+        <button class="close" type="button" aria-label="Close">×</button>
+      </div>
+      <div class="field">
+        <label for="categoryName">Category</label>
+        <input id="categoryName" maxlength="32" autocomplete="off" placeholder="Butter" required>
+      </div>
+      <div class="form-actions">
+        <button class="btn secondary" type="button" data-close>Cancel</button>
+        <button class="btn" type="submit">Save</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="itemDialog">
+    <form id="itemForm" method="dialog">
+      <div class="modal-head">
+        <h3 class="modal-title" id="itemModalTitle">Log food</h3>
+        <button class="close" type="button" aria-label="Close">×</button>
+      </div>
+      <input id="editingId" type="hidden">
+      <div class="field">
+        <label for="itemName">Name</label>
+        <input id="itemName" maxlength="64" autocomplete="off" placeholder="Vermont Creamery cultured butter" required>
+      </div>
+      <div class="field">
+        <label for="itemRating">Rating out of 5</label>
+        <div class="rating-row">
+          <input id="itemRating" type="range" min="0" max="5" step="0.25" value="4">
+          <div class="readout" id="ratingReadout">4.00</div>
+        </div>
+      </div>
+      <div class="field">
+        <label for="itemNotes">Notes</label>
+        <textarea id="itemNotes" maxlength="180" placeholder="Salty, grassy, excellent on warm bread."></textarea>
+      </div>
+      <div class="form-actions">
+        <button class="btn secondary" type="button" data-close>Cancel</button>
+        <button class="btn" type="submit">Save</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="settingsDialog">
+    <div class="sheet">
+      <div class="modal-head">
+        <h3 class="modal-title">Settings</h3>
+        <button class="close" type="button" aria-label="Close">×</button>
+      </div>
+      <div class="settings-row">
+        <div class="settings-title">Export backup</div>
+        <div class="settings-desc">Download a JSON backup of all categories and rankings.</div>
+        <button class="btn" id="exportData" type="button">Download JSON</button>
+      </div>
+      <div class="settings-row">
+        <div class="settings-title">Import backup</div>
+        <div class="settings-desc">Replace current data with a previously exported JSON file.</div>
+        <input class="file-input" id="importFile" type="file" accept="application/json,.json">
+        <button class="btn secondary" id="chooseImport" type="button">Choose File</button>
+      </div>
+      <div class="settings-row">
+        <div class="settings-title">Reset starter data</div>
+        <div class="settings-desc">Restore the sample Butter, Chocolate, and Olive oil categories.</div>
+        <button class="btn secondary" id="resetData" type="button">Reset</button>
+      </div>
+    </div>
+  </dialog>
+
+  <script>
+    const STORAGE_KEY = "taste-gazette-v2";
+    const starterData = {
+      activeCategoryId: "butter",
+      categories: [
+        { id: "butter", name: "Butter", items: [
+          { id: "i1", name: "Kerrygold Salted", rating: 4.5, notes: "Rich, creamy, dependable everyday favorite." },
+          { id: "i2", name: "Vermont Creamery Cultured", rating: 4.25, notes: "Tangy and elegant with toast." },
+          { id: "i3", name: "Store Brand Sweet Cream", rating: 3.25, notes: "Fine for baking, not memorable." }
+        ]},
+        { id: "chocolate", name: "Chocolate", items: [] },
+        { id: "olive-oil", name: "Olive oil", items: [] }
+      ]
+    };
+
+    let state = load();
+
+    const $ = (selector) => document.querySelector(selector);
+    const tabs = $("#tabs");
+    const list = $("#list");
+    const categoryDialog = $("#categoryDialog");
+    const itemDialog = $("#itemDialog");
+    const settingsDialog = $("#settingsDialog");
+    const categoryName = $("#categoryName");
+    const itemName = $("#itemName");
+    const itemRating = $("#itemRating");
+    const itemNotes = $("#itemNotes");
+    const editingId = $("#editingId");
+    const ratingReadout = $("#ratingReadout");
+
+    $("#openItem").addEventListener("click", () => openItemForm());
+    $("#openCategoryTop").addEventListener("click", openCategoryForm);
+    $("#openSettings").addEventListener("click", () => settingsDialog.showModal());
+    document.querySelectorAll(".close, [data-close]").forEach((button) => {
+      button.addEventListener("click", () => button.closest("dialog").close());
+    });
+    itemRating.addEventListener("input", () => ratingReadout.textContent = Number(itemRating.value).toFixed(2));
+
+    $("#categoryForm").addEventListener("submit", (event) => {
+      event.preventDefault();
+      const name = categoryName.value.trim();
+      if (!name) return;
+      const category = { id: uid(name), name, items: [] };
+      state.categories.push(category);
+      state.activeCategoryId = category.id;
+      save();
+      categoryDialog.close();
+      event.target.reset();
+      render();
+    });
+
+    $("#itemForm").addEventListener("submit", (event) => {
+      event.preventDefault();
+      const category = activeCategory();
+      const item = {
+        id: editingId.value || uid(itemName.value),
+        name: itemName.value.trim(),
+        rating: Number(itemRating.value),
+        notes: itemNotes.value.trim()
+      };
+      if (!item.name) return;
+      const index = category.items.findIndex((entry) => entry.id === item.id);
+      if (index >= 0) category.items[index] = item;
+      else category.items.push(item);
+      sortItems(category);
+      save();
+      itemDialog.close();
+      event.target.reset();
+      editingId.value = "";
+      render();
+    });
+
+    $("#exportData").addEventListener("click", () => {
+      const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `taste-gazette-${new Date().toISOString().slice(0, 10)}.json`;
+      link.click();
+      URL.revokeObjectURL(url);
+    });
+
+    $("#chooseImport").addEventListener("click", () => $("#importFile").click());
+    $("#importFile").addEventListener("change", async (event) => {
+      const file = event.target.files[0];
+      if (!file) return;
+      const imported = JSON.parse(await file.text());
+      if (!imported.categories || !Array.isArray(imported.categories)) return;
+      state = imported;
+      state.categories.forEach(sortItems);
+      save();
+      settingsDialog.close();
+      render();
+    });
+
+    $("#resetData").addEventListener("click", () => {
+      state = structuredClone(starterData);
+      save();
+      settingsDialog.close();
+      render();
+    });
+
+    function load() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+        if (saved?.categories?.length) {
+          saved.categories.forEach(sortItems);
+          return saved;
+        }
+      } catch (error) {
+        console.warn("Saved data could not be read.", error);
+      }
+      return structuredClone(starterData);
+    }
+    function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+    function activeCategory() {
+      return state.categories.find((category) => category.id === state.activeCategoryId) || state.categories[0];
+    }
+    function sortItems(category) {
+      category.items.sort((a, b) => b.rating - a.rating || a.name.localeCompare(b.name));
+    }
+    function uid(seed) {
+      const slug = seed.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "") || "entry";
+      return `${slug}-${Date.now().toString(36)}`;
+    }
+    function openCategoryForm() {
+      $("#categoryForm").reset();
+      categoryDialog.showModal();
+      requestAnimationFrame(() => categoryName.focus());
+    }
+    function openItemForm(item) {
+      const category = activeCategory();
+      $("#itemModalTitle").textContent = item ? "Edit entry" : `New ${category.name}`;
+      editingId.value = item?.id || "";
+      itemName.value = item?.name || "";
+      itemRating.value = item?.rating ?? 4;
+      itemNotes.value = item?.notes || "";
+      ratingReadout.textContent = Number(itemRating.value).toFixed(2);
+      itemDialog.showModal();
+      requestAnimationFrame(() => itemName.focus());
+    }
+    function setCategory(id) {
+      state.activeCategoryId = id;
+      save();
+      render();
+    }
+    function foodMarks(rating) {
+      const full = Math.round(rating);
+      return "●".repeat(full) + "○".repeat(5 - full);
+    }
+    function escapeAttr(value) {
+      return value.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
+    }
+    function renderTabs() {
+      tabs.innerHTML = "";
+      const current = activeCategory();
+      state.categories.forEach((category) => {
+        const button = document.createElement("button");
+        button.className = "tab";
+        button.type = "button";
+        button.ariaSelected = String(category.id === current.id);
+        button.innerHTML = `<span></span><em>${category.items.length}</em>`;
+        button.querySelector("span").textContent = category.name;
+        button.addEventListener("click", () => setCategory(category.id));
+        tabs.append(button);
+      });
+    }
+    function renderStats() {
+      const items = state.categories.flatMap((category) => category.items);
+      $("#totalTried").textContent = items.length;
+      $("#topScore").textContent = items.length ? Math.max(...items.map((item) => item.rating)).toFixed(2) : "-";
+    }
+    function renderList() {
+      const category = activeCategory();
+      sortItems(category);
+      $("#activeTitle").textContent = category.name;
+      list.innerHTML = "";
+      if (!category.items.length) {
+        list.innerHTML = `<div class="empty"><div><strong>No entries yet</strong><span>Add the first ${category.name.toLowerCase()} and it will rank automatically.</span></div></div>`;
+        return;
+      }
+      category.items.forEach((item, index) => {
+        const row = document.createElement("article");
+        row.className = "item";
+        row.innerHTML = `
+          <div class="rank">${index + 1}</div>
+          <div>
+            <h3 class="name"></h3>
+            ${item.notes ? '<p class="note"></p>' : ''}
+          </div>
+          <div class="scorebox">
+            <div class="score">${item.rating.toFixed(2)}</div>
+            <div class="marks" aria-label="${item.rating.toFixed(2)} out of 5">${foodMarks(item.rating)}</div>
+          </div>
+          <div class="actions">
+            <button class="mini edit" type="button" aria-label="Edit ${escapeAttr(item.name)}">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="m14 6 4 4M4 20l4.5-1 10-10a2.8 2.8 0 0 0-4-4l-10 10L4 20Z"/></svg>
+            </button>
+            <button class="mini danger remove" type="button" aria-label="Delete ${escapeAttr(item.name)}">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 14h10l1-14M9 7V4h6v3"/></svg>
+            </button>
+          </div>`;
+        row.querySelector(".name").textContent = item.name;
+        const note = row.querySelector(".note");
+        if (note) note.textContent = item.notes;
+        row.querySelector(".edit").addEventListener("click", () => openItemForm(item));
+        row.querySelector(".remove").addEventListener("click", () => {
+          category.items = category.items.filter((entry) => entry.id !== item.id);
+          save();
+          render();
+        });
+        list.append(row);
+      });
+    }
+    function render() {
+      renderTabs();
+      renderStats();
+      renderList();
+    }
+    render();
+  </script>
+</body>
+</html>
