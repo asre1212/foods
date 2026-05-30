@@ -3,25 +3,26 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#e5e5e0">
+  <meta name="theme-color" content="#dfe8df">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Taste Gazette">
   <title>The Taste Gazette</title>
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' fill='%23111111'/%3E%3Crect x='32' y='36' width='116' height='108' fill='%23f9f9f7'/%3E%3Cpath d='M50 64h80M50 84h80M50 104h48' stroke='%23111111' stroke-width='8'/%3E%3Ccircle cx='118' cy='113' r='17' fill='%23cc0000'/%3E%3Cpath d='M109 113h18M118 104v18' stroke='%23f9f9f7' stroke-width='6' stroke-linecap='round'/%3E%3C/svg%3E">
-  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' fill='%23111111'/%3E%3Crect x='32' y='36' width='116' height='108' fill='%23f9f9f7'/%3E%3Cpath d='M50 64h80M50 84h80M50 104h48' stroke='%23111111' stroke-width='8'/%3E%3Ccircle cx='118' cy='113' r='17' fill='%23cc0000'/%3E%3Cpath d='M109 113h18M118 104v18' stroke='%23f9f9f7' stroke-width='6' stroke-linecap='round'/%3E%3C/svg%3E">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='32' fill='%2318231d'/%3E%3Crect x='35' y='36' width='110' height='108' rx='10' fill='%23fbfaf4'/%3E%3Cpath d='M52 66h76M52 88h50M52 110h66' stroke='%2318231d' stroke-width='8' stroke-linecap='round'/%3E%3Ccircle cx='121' cy='104' r='21' fill='%232f6f83'/%3E%3Cpath d='M111 104h20M121 94v20' stroke='%23fbfaf4' stroke-width='7' stroke-linecap='round'/%3E%3C/svg%3E">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='32' fill='%2318231d'/%3E%3Crect x='35' y='36' width='110' height='108' rx='10' fill='%23fbfaf4'/%3E%3Cpath d='M52 66h76M52 88h50M52 110h66' stroke='%2318231d' stroke-width='8' stroke-linecap='round'/%3E%3Ccircle cx='121' cy='104' r='21' fill='%232f6f83'/%3E%3Cpath d='M111 104h20M121 94v20' stroke='%23fbfaf4' stroke-width='7' stroke-linecap='round'/%3E%3C/svg%3E">
+  <link rel="manifest" href='data:application/manifest+json,{"name":"The Taste Gazette","short_name":"Taste","display":"standalone","background_color":"%23fbfaf4","theme_color":"%23dfe8df","icons":[{"src":"data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 180 180%27%3E%3Crect width=%27180%27 height=%27180%27 rx=%2732%27 fill=%27%2318231d%27/%3E%3Crect x=%2735%27 y=%2736%27 width=%27110%27 height=%27108%27 rx=%2710%27 fill=%27%23fbfaf4%27/%3E%3Cpath d=%27M52 66h76M52 88h50M52 110h66%27 stroke=%27%2318231d%27 stroke-width=%278%27 stroke-linecap=%27round%27/%3E%3Ccircle cx=%27121%27 cy=%27104%27 r=%2721%27 fill=%27%232f6f83%27/%3E%3Cpath d=%27M111 104h20M121 94v20%27 stroke=%27%23fbfaf4%27 stroke-width=%277%27 stroke-linecap=%27round%27/%3E%3C/svg%3E","sizes":"180x180","type":"image/svg+xml","purpose":"any maskable"}]}'>
   <style>
     * { box-sizing: border-box; }
     :root {
-      --bg: #f9f9f7;
-      --mast: #e5e5e0;
-      --panel: #f0f0ee;
-      --ink: #111;
-      --muted: #737373;
-      --red: #c00;
-      --gold: #b77c38;
-      --green: #466f58;
-      --danger: #a40018;
+      --bg: #fbfaf4;
+      --mast: #dfe8df;
+      --panel: #edf2ec;
+      --ink: #18231d;
+      --muted: #68746e;
+      --accent: #2f6f83;
+      --gold: #c3813e;
+      --green: #3f765d;
+      --danger: #a5403a;
       color-scheme: light;
       font-family: Inter, "Helvetica Neue", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
@@ -43,7 +44,7 @@
       min-height: 100vh;
       margin: 0 auto;
       background: var(--bg);
-      border-inline: 1px solid rgba(17, 17, 17, .08);
+      border-inline: 1px solid rgba(24, 35, 29, .09);
       padding-bottom: max(14px, env(safe-area-inset-bottom));
     }
     .masthead {
@@ -58,7 +59,7 @@
     .app-icon { width: 44px; height: 44px; display: block; }
     .overline {
       margin-bottom: 2px;
-      color: var(--red);
+      color: var(--accent);
       font-size: 9px;
       font-weight: 800;
       letter-spacing: .2em;
@@ -71,14 +72,6 @@
       line-height: .95;
       font-weight: 900;
       letter-spacing: -.4px;
-    }
-    .dateline {
-      margin-top: 5px;
-      color: #525252;
-      font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
-      font-size: 9px;
-      letter-spacing: .06em;
-      text-transform: uppercase;
     }
     .gear {
       width: 38px;
@@ -125,7 +118,7 @@
       right: 0;
       bottom: -4px;
       height: 4px;
-      background: var(--red);
+      background: var(--accent);
     }
     .addbar {
       display: grid;
@@ -221,6 +214,20 @@
       font-style: italic;
       line-height: 1.35;
     }
+    .subcat {
+      display: inline-flex;
+      max-width: 100%;
+      margin: 7px 0 0;
+      padding: 3px 7px;
+      border: 1px solid rgba(24, 35, 29, .28);
+      color: var(--accent);
+      background: rgba(47, 111, 131, .08);
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      overflow-wrap: anywhere;
+    }
     .scorebox { text-align: right; min-width: 62px; }
     .score {
       font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
@@ -307,9 +314,9 @@
     }
     input { height: 46px; padding: 0 12px; }
     textarea { min-height: 86px; resize: vertical; padding: 11px 12px; line-height: 1.35; }
-    input:focus, textarea:focus { box-shadow: 0 0 0 3px rgba(204, 0, 0, .18); }
+    input:focus, textarea:focus { box-shadow: 0 0 0 3px rgba(47, 111, 131, .2); }
     .rating-row { display: grid; grid-template-columns: 1fr 68px; gap: 10px; align-items: center; }
-    input[type="range"] { height: 34px; padding: 0; border: 0; accent-color: var(--red); background: transparent; }
+    input[type="range"] { height: 34px; padding: 0; border: 0; accent-color: var(--accent); background: transparent; }
     .readout {
       display: grid;
       place-items: center;
@@ -320,6 +327,30 @@
       font-weight: 800;
     }
     .form-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-top: 16px; }
+    .category-tools {
+      display: grid;
+      grid-template-columns: 1fr 1fr auto;
+      gap: 8px;
+      padding: 0 16px 12px;
+    }
+    .tool {
+      min-height: 32px;
+      padding: 0 8px;
+      border: 1px solid var(--ink);
+      background: transparent;
+      color: var(--ink);
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+    .tool:disabled {
+      opacity: .36;
+      cursor: default;
+    }
+    .tool.danger {
+      color: var(--danger);
+    }
     .settings-row {
       padding: 12px 0;
       border-bottom: 1px solid var(--ink);
@@ -342,16 +373,15 @@
   <main class="app">
     <header class="masthead">
       <svg class="app-icon" viewBox="0 0 180 180" aria-hidden="true">
-        <rect width="180" height="180" fill="#111"/>
-        <rect x="32" y="36" width="116" height="108" fill="#f9f9f7"/>
-        <path d="M50 64h80M50 84h80M50 104h48" stroke="#111" stroke-width="8"/>
-        <circle cx="118" cy="113" r="17" fill="#c00"/>
-        <path d="M109 113h18M118 104v18" stroke="#f9f9f7" stroke-width="6" stroke-linecap="round"/>
+        <rect width="180" height="180" rx="32" fill="#18231d"/>
+        <rect x="35" y="36" width="110" height="108" rx="10" fill="#fbfaf4"/>
+        <path d="M52 66h76M52 88h50M52 110h66" stroke="#18231d" stroke-width="8" stroke-linecap="round"/>
+        <circle cx="121" cy="104" r="21" fill="#2f6f83"/>
+        <path d="M111 104h20M121 94v20" stroke="#fbfaf4" stroke-width="7" stroke-linecap="round"/>
       </svg>
       <div>
         <div class="overline">Food rankings</div>
         <h1>The Taste Gazette</h1>
-        <div class="dateline">Saved on this iPhone · highest first</div>
       </div>
       <button class="gear" id="openSettings" type="button" aria-label="Settings">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"/><path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1-2 3.4-.2-.1a1.7 1.7 0 0 0-1.9.1 8 8 0 0 1-1.6.9 1.6 1.6 0 0 0-1.1 1.5v.3H9v-.3a1.6 1.6 0 0 0-1.1-1.5 8 8 0 0 1-1.6-.9 1.7 1.7 0 0 0-1.9-.1l-.2.1-2-3.4.1-.1a1.6 1.6 0 0 0 .3-1.8 8 8 0 0 1 0-1.9 1.6 1.6 0 0 0-.3-1.8l-.1-.1 2-3.4.2.1a1.7 1.7 0 0 0 1.9-.1 8 8 0 0 1 1.6-.9A1.6 1.6 0 0 0 9 5.3V5h4v.3a1.6 1.6 0 0 0 1.1 1.5 8 8 0 0 1 1.6.9 1.7 1.7 0 0 0 1.9.1l.2-.1 2 3.4-.1.1a1.6 1.6 0 0 0-.3 1.8 8 8 0 0 1 0 2Z"/></svg>
@@ -374,6 +404,11 @@
       <div class="section-head">
         <h2 id="activeTitle">Category</h2>
         <div class="section-note">Autosorted</div>
+      </div>
+      <div class="category-tools">
+        <button class="tool" id="moveCategoryLeft" type="button">Move ←</button>
+        <button class="tool" id="moveCategoryRight" type="button">Move →</button>
+        <button class="tool danger" id="deleteCategory" type="button">Delete</button>
       </div>
       <div class="list" id="list"></div>
     </section>
@@ -408,6 +443,10 @@
         <input id="itemName" maxlength="64" autocomplete="off" placeholder="Vermont Creamery cultured butter" required>
       </div>
       <div class="field">
+        <label for="itemSubcategory">Sub-category</label>
+        <input id="itemSubcategory" maxlength="48" autocomplete="off" placeholder="Raspberry, salted, vanilla bean">
+      </div>
+      <div class="field">
         <label for="itemRating">Rating out of 5</label>
         <div class="rating-row">
           <input id="itemRating" type="range" min="0" max="5" step="0.25" value="4">
@@ -432,6 +471,11 @@
         <button class="close" type="button" aria-label="Close">×</button>
       </div>
       <div class="settings-row">
+        <div class="settings-title">Hard update from GitHub</div>
+        <div class="settings-desc">Force the browser to fetch the newest hosted file. Your saved rankings stay in local storage.</div>
+        <button class="btn" id="hardUpdate" type="button">Hard Update</button>
+      </div>
+      <div class="settings-row">
         <div class="settings-title">Export backup</div>
         <div class="settings-desc">Download a JSON backup of all categories and rankings.</div>
         <button class="btn" id="exportData" type="button">Download JSON</button>
@@ -444,7 +488,7 @@
       </div>
       <div class="settings-row">
         <div class="settings-title">Reset starter data</div>
-        <div class="settings-desc">Restore the sample Butter, Chocolate, and Olive oil categories.</div>
+        <div class="settings-desc">Restore the sample Butter, Jam, Chocolate, and Olive oil categories.</div>
         <button class="btn secondary" id="resetData" type="button">Reset</button>
       </div>
     </div>
@@ -456,9 +500,13 @@
       activeCategoryId: "butter",
       categories: [
         { id: "butter", name: "Butter", items: [
-          { id: "i1", name: "Kerrygold Salted", rating: 4.5, notes: "Rich, creamy, dependable everyday favorite." },
-          { id: "i2", name: "Vermont Creamery Cultured", rating: 4.25, notes: "Tangy and elegant with toast." },
-          { id: "i3", name: "Store Brand Sweet Cream", rating: 3.25, notes: "Fine for baking, not memorable." }
+          { id: "i1", name: "Kerrygold Salted", subcategory: "Irish", rating: 4.5, notes: "Rich, creamy, dependable everyday favorite." },
+          { id: "i2", name: "Vermont Creamery Cultured", subcategory: "Cultured", rating: 4.25, notes: "Tangy and elegant with toast." },
+          { id: "i3", name: "Store Brand Sweet Cream", subcategory: "Baking", rating: 3.25, notes: "Fine for baking, not memorable." }
+        ]},
+        { id: "jam", name: "Jam", items: [
+          { id: "j1", name: "Bonne Maman", subcategory: "Raspberry", rating: 4.5, notes: "Bright fruit, good texture." },
+          { id: "j2", name: "Bonne Maman", subcategory: "Apricot", rating: 4, notes: "Clean and mellow." }
         ]},
         { id: "chocolate", name: "Chocolate", items: [] },
         { id: "olive-oil", name: "Olive oil", items: [] }
@@ -475,6 +523,7 @@
     const settingsDialog = $("#settingsDialog");
     const categoryName = $("#categoryName");
     const itemName = $("#itemName");
+    const itemSubcategory = $("#itemSubcategory");
     const itemRating = $("#itemRating");
     const itemNotes = $("#itemNotes");
     const editingId = $("#editingId");
@@ -483,6 +532,9 @@
     $("#openItem").addEventListener("click", () => openItemForm());
     $("#openCategoryTop").addEventListener("click", openCategoryForm);
     $("#openSettings").addEventListener("click", () => settingsDialog.showModal());
+    $("#moveCategoryLeft").addEventListener("click", () => moveCategory(-1));
+    $("#moveCategoryRight").addEventListener("click", () => moveCategory(1));
+    $("#deleteCategory").addEventListener("click", deleteActiveCategory);
     document.querySelectorAll(".close, [data-close]").forEach((button) => {
       button.addEventListener("click", () => button.closest("dialog").close());
     });
@@ -507,6 +559,7 @@
       const item = {
         id: editingId.value || uid(itemName.value),
         name: itemName.value.trim(),
+        subcategory: itemSubcategory.value.trim(),
         rating: Number(itemRating.value),
         notes: itemNotes.value.trim()
       };
@@ -530,6 +583,20 @@
       link.download = `taste-gazette-${new Date().toISOString().slice(0, 10)}.json`;
       link.click();
       URL.revokeObjectURL(url);
+    });
+
+    $("#hardUpdate").addEventListener("click", async () => {
+      if ("serviceWorker" in navigator) {
+        const registrations = await navigator.serviceWorker.getRegistrations();
+        await Promise.all(registrations.map((registration) => registration.unregister()));
+      }
+      if ("caches" in window) {
+        const keys = await caches.keys();
+        await Promise.all(keys.map((key) => caches.delete(key)));
+      }
+      const url = new URL(window.location.href);
+      url.searchParams.set("update", Date.now().toString(36));
+      window.location.replace(url.toString());
     });
 
     $("#chooseImport").addEventListener("click", () => $("#importFile").click());
@@ -556,6 +623,10 @@
       try {
         const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
         if (saved?.categories?.length) {
+          saved.categories.forEach((category) => {
+            category.items = Array.isArray(category.items) ? category.items : [];
+            category.items.forEach((item) => item.subcategory ??= "");
+          });
           saved.categories.forEach(sortItems);
           return saved;
         }
@@ -569,7 +640,7 @@
       return state.categories.find((category) => category.id === state.activeCategoryId) || state.categories[0];
     }
     function sortItems(category) {
-      category.items.sort((a, b) => b.rating - a.rating || a.name.localeCompare(b.name));
+      category.items.sort((a, b) => b.rating - a.rating || a.name.localeCompare(b.name) || (a.subcategory || "").localeCompare(b.subcategory || ""));
     }
     function uid(seed) {
       const slug = seed.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "") || "entry";
@@ -585,6 +656,7 @@
       $("#itemModalTitle").textContent = item ? "Edit entry" : `New ${category.name}`;
       editingId.value = item?.id || "";
       itemName.value = item?.name || "";
+      itemSubcategory.value = item?.subcategory || "";
       itemRating.value = item?.rating ?? 4;
       itemNotes.value = item?.notes || "";
       ratingReadout.textContent = Number(itemRating.value).toFixed(2);
@@ -593,6 +665,26 @@
     }
     function setCategory(id) {
       state.activeCategoryId = id;
+      save();
+      render();
+    }
+    function moveCategory(direction) {
+      const index = state.categories.findIndex((category) => category.id === activeCategory().id);
+      const nextIndex = index + direction;
+      if (index < 0 || nextIndex < 0 || nextIndex >= state.categories.length) return;
+      const [category] = state.categories.splice(index, 1);
+      state.categories.splice(nextIndex, 0, category);
+      save();
+      render();
+    }
+    function deleteActiveCategory() {
+      if (state.categories.length <= 1) return;
+      const category = activeCategory();
+      const confirmed = confirm(`Delete ${category.name} and its ${category.items.length} entries?`);
+      if (!confirmed) return;
+      const index = state.categories.findIndex((entry) => entry.id === category.id);
+      state.categories.splice(index, 1);
+      state.activeCategoryId = state.categories[Math.max(0, index - 1)].id;
       save();
       render();
     }
@@ -626,6 +718,10 @@
       const category = activeCategory();
       sortItems(category);
       $("#activeTitle").textContent = category.name;
+      const categoryIndex = state.categories.findIndex((entry) => entry.id === category.id);
+      $("#moveCategoryLeft").disabled = categoryIndex <= 0;
+      $("#moveCategoryRight").disabled = categoryIndex === state.categories.length - 1;
+      $("#deleteCategory").disabled = state.categories.length <= 1;
       list.innerHTML = "";
       if (!category.items.length) {
         list.innerHTML = `<div class="empty"><div><strong>No entries yet</strong><span>Add the first ${category.name.toLowerCase()} and it will rank automatically.</span></div></div>`;
@@ -638,6 +734,7 @@
           <div class="rank">${index + 1}</div>
           <div>
             <h3 class="name"></h3>
+            ${item.subcategory ? '<div class="subcat"></div>' : ''}
             ${item.notes ? '<p class="note"></p>' : ''}
           </div>
           <div class="scorebox">
@@ -653,6 +750,8 @@
             </button>
           </div>`;
         row.querySelector(".name").textContent = item.name;
+        const subcat = row.querySelector(".subcat");
+        if (subcat) subcat.textContent = item.subcategory;
         const note = row.querySelector(".note");
         if (note) note.textContent = item.notes;
         row.querySelector(".edit").addEventListener("click", () => openItemForm(item));
