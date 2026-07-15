@@ -139,6 +139,26 @@
       text-transform: uppercase;
     }
     .btn.secondary { background: transparent; color: var(--ink); border: 1px solid var(--ink); }
+    .btn:disabled { opacity: .38; cursor: default; }
+    .search-wrap { grid-column: 1 / -1; position: relative; }
+    .search-wrap input {
+      height: 38px;
+      padding: 0 40px 0 12px;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+    .search-wrap input::-webkit-search-cancel-button { display: none; }
+    .search-clear {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 38px;
+      height: 38px;
+      background: transparent;
+      color: var(--ink);
+      border-left: 1px solid var(--ink);
+      font-size: 16px;
+    }
     .stats {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -157,7 +177,7 @@
       font-size: 27px;
       line-height: 1;
     }
-    .stat span, .section-note {
+    .stat span {
       color: var(--muted);
       font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
       font-size: 9px;
@@ -178,6 +198,20 @@
       font-size: 23px;
       line-height: 1;
     }
+    .sorters { display: flex; border: 1px solid var(--ink); }
+    .sorter {
+      min-height: 26px;
+      padding: 0 9px;
+      background: transparent;
+      color: var(--muted);
+      border-right: 1px solid var(--ink);
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+    .sorter:last-child { border-right: 0; }
+    .sorter[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
     .list { border-top: 1px solid var(--ink); }
     .item {
       display: grid;
@@ -198,6 +232,16 @@
       font-size: 13px;
       font-weight: 800;
     }
+    .itembody { display: flex; gap: 10px; min-width: 0; }
+    .itembody .text { flex: 1; min-width: 0; }
+    .thumb {
+      flex: 0 0 auto;
+      width: 46px;
+      height: 46px;
+      object-fit: cover;
+      border: 1px solid var(--ink);
+      cursor: pointer;
+    }
     .name {
       margin: 0;
       overflow-wrap: anywhere;
@@ -214,10 +258,10 @@
       font-style: italic;
       line-height: 1.35;
     }
-    .subcat {
+    .subcat, .cattag {
       display: inline-flex;
       max-width: 100%;
-      margin: 7px 0 0;
+      margin: 7px 6px 0 0;
       padding: 3px 7px;
       border: 1px solid rgba(24, 35, 29, .28);
       color: var(--accent);
@@ -228,6 +272,7 @@
       text-transform: uppercase;
       overflow-wrap: anywhere;
     }
+    .cattag { color: var(--green); background: rgba(63, 118, 93, .1); }
     .scorebox { text-align: right; min-width: 62px; }
     .score {
       font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
@@ -326,6 +371,15 @@
       font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
       font-weight: 800;
     }
+    .photo-row { display: flex; gap: 10px; align-items: center; }
+    .photo-preview {
+      display: none;
+      width: 56px;
+      height: 56px;
+      padding: 0;
+      object-fit: cover;
+      border: 1px solid var(--ink);
+    }
     .form-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-top: 16px; }
     .category-tools {
       display: grid;
@@ -359,6 +413,38 @@
     .settings-title { font-weight: 800; font-size: 13px; letter-spacing: .05em; text-transform: uppercase; }
     .settings-desc { margin: 5px 0 10px; color: var(--muted); font-size: 13px; line-height: 1.45; }
     .file-input { display: none; }
+    #photoDialog { width: auto; max-width: min(calc(100vw - 28px), 430px); background: var(--ink); cursor: pointer; }
+    #photoDialog img { display: block; max-width: 100%; max-height: 80vh; }
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: calc(18px + env(safe-area-inset-bottom));
+      transform: translateX(-50%);
+      z-index: 100;
+      display: none;
+      align-items: center;
+      gap: 14px;
+      max-width: calc(100vw - 28px);
+      padding: 10px 12px 10px 15px;
+      background: var(--ink);
+      color: var(--bg);
+      font-size: 13px;
+      box-shadow: 0 12px 30px rgba(17, 17, 17, .35);
+    }
+    .toast.show { display: flex; }
+    .toast span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .toast button {
+      flex: 0 0 auto;
+      min-height: 30px;
+      padding: 0 10px;
+      background: transparent;
+      color: var(--bg);
+      border: 1px solid var(--bg);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
     @media (max-width: 355px) {
       .masthead { grid-template-columns: 1fr auto; }
       .app-icon { display: none; }
@@ -393,6 +479,10 @@
     <section class="addbar">
       <button class="btn" id="openItem" type="button">+ Log Food</button>
       <button class="btn secondary" id="openCategoryTop" type="button">+ Category</button>
+      <div class="search-wrap">
+        <input id="search" type="search" placeholder="Search names, notes, sub-categories" autocomplete="off" aria-label="Search entries">
+        <button class="search-clear" id="searchClear" type="button" aria-label="Clear search" hidden>×</button>
+      </div>
     </section>
 
     <section class="stats" aria-label="Overview">
@@ -403,7 +493,11 @@
     <section aria-live="polite">
       <div class="section-head">
         <h2 id="activeTitle">Category</h2>
-        <div class="section-note">Autosorted</div>
+        <div class="sorters" role="group" aria-label="Sort order">
+          <button class="sorter" type="button" data-sort="rating" aria-pressed="true">Rating</button>
+          <button class="sorter" type="button" data-sort="name" aria-pressed="false">A–Z</button>
+          <button class="sorter" type="button" data-sort="newest" aria-pressed="false">New</button>
+        </div>
       </div>
       <div class="category-tools">
         <button class="tool" id="moveCategoryLeft" type="button">Move ←</button>
@@ -454,6 +548,15 @@
         </div>
       </div>
       <div class="field">
+        <label id="photoLabel">Photo</label>
+        <div class="photo-row">
+          <img class="photo-preview" id="photoPreview" alt="Photo preview">
+          <button class="tool" id="addPhoto" type="button">Add Photo</button>
+          <button class="tool danger" id="removePhoto" type="button" hidden>Remove</button>
+          <input class="file-input" id="photoFile" type="file" accept="image/*" aria-labelledby="photoLabel">
+        </div>
+      </div>
+      <div class="field">
         <label for="itemNotes">Notes</label>
         <textarea id="itemNotes" maxlength="180" placeholder="Salty, grassy, excellent on warm bread."></textarea>
       </div>
@@ -491,22 +594,39 @@
         <div class="settings-desc">Restore the sample Butter, Jam, Chocolate, and Olive oil categories.</div>
         <button class="btn secondary" id="resetData" type="button">Reset</button>
       </div>
+      <div class="settings-row">
+        <div class="settings-title">Start fresh</div>
+        <div class="settings-desc">Delete every category and entry for a completely blank gazette.</div>
+        <button class="btn secondary" id="clearData" type="button">Clear All Data</button>
+      </div>
     </div>
   </dialog>
 
+  <dialog id="photoDialog">
+    <img id="photoFull" alt="Food photo">
+  </dialog>
+
+  <div class="toast" id="toast" role="status">
+    <span id="toastText"></span>
+    <button id="toastUndo" type="button">Undo</button>
+  </div>
+
   <script>
     const STORAGE_KEY = "taste-gazette-v2";
+    const ALL_ID = "__all__";
+    const SORT_MODES = ["rating", "name", "newest"];
     const starterData = {
       activeCategoryId: "butter",
+      sortMode: "rating",
       categories: [
         { id: "butter", name: "Butter", items: [
-          { id: "i1", name: "Kerrygold Salted", subcategory: "Irish", rating: 4.5, notes: "Rich, creamy, dependable everyday favorite." },
-          { id: "i2", name: "Vermont Creamery Cultured", subcategory: "Cultured", rating: 4.25, notes: "Tangy and elegant with toast." },
-          { id: "i3", name: "Store Brand Sweet Cream", subcategory: "Baking", rating: 3.25, notes: "Fine for baking, not memorable." }
+          { id: "i1", name: "Kerrygold Salted", subcategory: "Irish", rating: 4.5, notes: "Rich, creamy, dependable everyday favorite.", photo: "", addedAt: 1 },
+          { id: "i2", name: "Vermont Creamery Cultured", subcategory: "Cultured", rating: 4.25, notes: "Tangy and elegant with toast.", photo: "", addedAt: 2 },
+          { id: "i3", name: "Store Brand Sweet Cream", subcategory: "Baking", rating: 3.25, notes: "Fine for baking, not memorable.", photo: "", addedAt: 3 }
         ]},
         { id: "jam", name: "Jam", items: [
-          { id: "j1", name: "Bonne Maman", subcategory: "Raspberry", rating: 4.5, notes: "Bright fruit, good texture." },
-          { id: "j2", name: "Bonne Maman", subcategory: "Apricot", rating: 4, notes: "Clean and mellow." }
+          { id: "j1", name: "Bonne Maman", subcategory: "Raspberry", rating: 4.5, notes: "Bright fruit, good texture.", photo: "", addedAt: 4 },
+          { id: "j2", name: "Bonne Maman", subcategory: "Apricot", rating: 4, notes: "Clean and mellow.", photo: "", addedAt: 5 }
         ]},
         { id: "chocolate", name: "Chocolate", items: [] },
         { id: "olive-oil", name: "Olive oil", items: [] }
@@ -514,6 +634,10 @@
     };
 
     let state = load();
+    let pendingPhoto = "";
+    let lastDeleted = null;
+    let undoTimer = null;
+    let formCategoryId = "";
 
     const $ = (selector) => document.querySelector(selector);
     const tabs = $("#tabs");
@@ -521,6 +645,7 @@
     const categoryDialog = $("#categoryDialog");
     const itemDialog = $("#itemDialog");
     const settingsDialog = $("#settingsDialog");
+    const photoDialog = $("#photoDialog");
     const categoryName = $("#categoryName");
     const itemName = $("#itemName");
     const itemSubcategory = $("#itemSubcategory");
@@ -528,6 +653,13 @@
     const itemNotes = $("#itemNotes");
     const editingId = $("#editingId");
     const ratingReadout = $("#ratingReadout");
+    const searchInput = $("#search");
+    const searchClear = $("#searchClear");
+    const photoPreview = $("#photoPreview");
+    const addPhoto = $("#addPhoto");
+    const removePhoto = $("#removePhoto");
+    const photoFile = $("#photoFile");
+    const toast = $("#toast");
 
     $("#openItem").addEventListener("click", () => openItemForm());
     $("#openCategoryTop").addEventListener("click", openCategoryForm);
@@ -539,6 +671,57 @@
       button.addEventListener("click", () => button.closest("dialog").close());
     });
     itemRating.addEventListener("input", () => ratingReadout.textContent = Number(itemRating.value).toFixed(2));
+
+    searchInput.addEventListener("input", () => {
+      searchClear.hidden = !searchInput.value;
+      renderList();
+    });
+    searchClear.addEventListener("click", () => {
+      searchInput.value = "";
+      searchClear.hidden = true;
+      renderList();
+      searchInput.focus();
+    });
+
+    document.querySelectorAll(".sorter").forEach((button) => {
+      button.addEventListener("click", () => {
+        state.sortMode = button.dataset.sort;
+        save();
+        render();
+      });
+    });
+
+    addPhoto.addEventListener("click", () => photoFile.click());
+    photoFile.addEventListener("change", async (event) => {
+      const file = event.target.files[0];
+      event.target.value = "";
+      if (!file) return;
+      try {
+        pendingPhoto = await compressPhoto(file);
+        updatePhotoUI();
+      } catch (error) {
+        console.warn("Photo could not be processed.", error);
+        alert("That image could not be read. Try a different photo.");
+      }
+    });
+    removePhoto.addEventListener("click", () => {
+      pendingPhoto = "";
+      updatePhotoUI();
+    });
+    photoDialog.addEventListener("click", () => photoDialog.close());
+
+    $("#toastUndo").addEventListener("click", () => {
+      if (lastDeleted) {
+        const owner = state.categories.find((category) => category.id === lastDeleted.categoryId);
+        if (owner) {
+          owner.items.splice(Math.min(lastDeleted.index, owner.items.length), 0, lastDeleted.item);
+          save();
+          render();
+        }
+        lastDeleted = null;
+      }
+      hideToast();
+    });
 
     $("#categoryForm").addEventListener("submit", (event) => {
       event.preventDefault();
@@ -555,19 +738,28 @@
 
     $("#itemForm").addEventListener("submit", (event) => {
       event.preventDefault();
-      const category = activeCategory();
+      const category = state.categories.find((entry) => entry.id === formCategoryId) || activeCategory();
+      if (!category) return;
+      const existing = editingId.value ? category.items.find((entry) => entry.id === editingId.value) : null;
       const item = {
         id: editingId.value || uid(itemName.value),
         name: itemName.value.trim(),
         subcategory: itemSubcategory.value.trim(),
         rating: Number(itemRating.value),
-        notes: itemNotes.value.trim()
+        notes: itemNotes.value.trim(),
+        photo: pendingPhoto,
+        addedAt: existing?.addedAt ?? Date.now()
       };
       if (!item.name) return;
+      const duplicate = category.items.find((entry) =>
+        entry.id !== item.id &&
+        entry.name.trim().toLowerCase() === item.name.toLowerCase() &&
+        (entry.subcategory || "").trim().toLowerCase() === item.subcategory.toLowerCase()
+      );
+      if (duplicate && !confirm(`"${item.name}" is already logged in ${category.name}. Save it again anyway?`)) return;
       const index = category.items.findIndex((entry) => entry.id === item.id);
       if (index >= 0) category.items[index] = item;
       else category.items.push(item);
-      sortItems(category);
       save();
       itemDialog.close();
       event.target.reset();
@@ -602,11 +794,19 @@
     $("#chooseImport").addEventListener("click", () => $("#importFile").click());
     $("#importFile").addEventListener("change", async (event) => {
       const file = event.target.files[0];
+      event.target.value = "";
       if (!file) return;
-      const imported = JSON.parse(await file.text());
-      if (!imported.categories || !Array.isArray(imported.categories)) return;
+      let imported = null;
+      try {
+        imported = normalize(JSON.parse(await file.text()));
+      } catch (error) {
+        console.warn("Import could not be parsed.", error);
+      }
+      if (!imported) {
+        alert("That file is not a valid Taste Gazette backup.");
+        return;
+      }
       state = imported;
-      state.categories.forEach(sortItems);
       save();
       settingsDialog.close();
       render();
@@ -619,46 +819,134 @@
       render();
     });
 
+    $("#clearData").addEventListener("click", () => {
+      if (!confirm("Delete every category and entry? Export a backup first if you want to keep them.")) return;
+      state = { activeCategoryId: "", sortMode: state.sortMode, categories: [] };
+      lastDeleted = null;
+      hideToast();
+      save();
+      settingsDialog.close();
+      render();
+    });
+
+    function normalize(raw) {
+      if (!raw || !Array.isArray(raw.categories)) return null;
+      const categories = raw.categories.map((category) => {
+        if (!category || typeof category.name !== "string" || !category.name.trim()) return null;
+        const items = (Array.isArray(category.items) ? category.items : []).map((item) => {
+          if (!item || typeof item.name !== "string" || !item.name.trim()) return null;
+          const rating = Number(item.rating);
+          return {
+            id: typeof item.id === "string" && item.id ? item.id : uid(item.name),
+            name: item.name.trim(),
+            subcategory: typeof item.subcategory === "string" ? item.subcategory : "",
+            rating: Number.isFinite(rating) ? Math.min(5, Math.max(0, rating)) : 0,
+            notes: typeof item.notes === "string" ? item.notes : "",
+            photo: typeof item.photo === "string" && item.photo.startsWith("data:image/") ? item.photo : "",
+            addedAt: Number.isFinite(Number(item.addedAt)) ? Number(item.addedAt) : 0
+          };
+        }).filter(Boolean);
+        return {
+          id: typeof category.id === "string" && category.id ? category.id : uid(category.name),
+          name: category.name.trim(),
+          items
+        };
+      }).filter(Boolean);
+      const activeCategoryId =
+        raw.activeCategoryId === ALL_ID || categories.some((category) => category.id === raw.activeCategoryId)
+          ? raw.activeCategoryId
+          : (categories[0]?.id || "");
+      return {
+        activeCategoryId,
+        sortMode: SORT_MODES.includes(raw.sortMode) ? raw.sortMode : "rating",
+        categories
+      };
+    }
+
     function load() {
       try {
-        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
-        if (saved?.categories?.length) {
-          saved.categories.forEach((category) => {
-            category.items = Array.isArray(category.items) ? category.items : [];
-            category.items.forEach((item) => item.subcategory ??= "");
-          });
-          saved.categories.forEach(sortItems);
-          return saved;
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (stored !== null) {
+          const saved = normalize(JSON.parse(stored));
+          if (saved) return saved;
         }
       } catch (error) {
         console.warn("Saved data could not be read.", error);
       }
       return structuredClone(starterData);
     }
-    function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
-    function activeCategory() {
-      return state.categories.find((category) => category.id === state.activeCategoryId) || state.categories[0];
+    function save() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      } catch (error) {
+        console.warn("Saving failed.", error);
+        alert("Storage is full, so this change was not saved. Remove a few photos or export a backup.");
+      }
     }
-    function sortItems(category) {
-      category.items.sort((a, b) => b.rating - a.rating || a.name.localeCompare(b.name) || (a.subcategory || "").localeCompare(b.subcategory || ""));
+    function activeCategory() {
+      if (state.activeCategoryId === ALL_ID) return null;
+      return state.categories.find((category) => category.id === state.activeCategoryId) || state.categories[0] || null;
+    }
+    function sortedEntries(entries) {
+      const copy = [...entries];
+      if (state.sortMode === "name") {
+        copy.sort((a, b) => a.item.name.localeCompare(b.item.name) || (a.item.subcategory || "").localeCompare(b.item.subcategory || ""));
+      } else if (state.sortMode === "newest") {
+        copy.sort((a, b) => (b.item.addedAt || 0) - (a.item.addedAt || 0) || a.item.name.localeCompare(b.item.name));
+      } else {
+        copy.sort((a, b) => b.item.rating - a.item.rating || a.item.name.localeCompare(b.item.name) || (a.item.subcategory || "").localeCompare(b.item.subcategory || ""));
+      }
+      return copy;
     }
     function uid(seed) {
       const slug = seed.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "") || "entry";
       return `${slug}-${Date.now().toString(36)}`;
+    }
+    async function fileToImage(file) {
+      if ("createImageBitmap" in window) return createImageBitmap(file);
+      return new Promise((resolve, reject) => {
+        const image = new Image();
+        const url = URL.createObjectURL(file);
+        image.onload = () => { URL.revokeObjectURL(url); resolve(image); };
+        image.onerror = () => { URL.revokeObjectURL(url); reject(new Error("Image failed to load")); };
+        image.src = url;
+      });
+    }
+    async function compressPhoto(file) {
+      const source = await fileToImage(file);
+      const width = source.width || source.naturalWidth;
+      const height = source.height || source.naturalHeight;
+      const scale = Math.min(1, 512 / Math.max(width, height));
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.max(1, Math.round(width * scale));
+      canvas.height = Math.max(1, Math.round(height * scale));
+      canvas.getContext("2d").drawImage(source, 0, 0, canvas.width, canvas.height);
+      if (source.close) source.close();
+      return canvas.toDataURL("image/jpeg", 0.72);
+    }
+    function updatePhotoUI() {
+      photoPreview.src = pendingPhoto || "";
+      photoPreview.style.display = pendingPhoto ? "block" : "none";
+      removePhoto.hidden = !pendingPhoto;
+      addPhoto.textContent = pendingPhoto ? "Replace Photo" : "Add Photo";
     }
     function openCategoryForm() {
       $("#categoryForm").reset();
       categoryDialog.showModal();
       requestAnimationFrame(() => categoryName.focus());
     }
-    function openItemForm(item) {
-      const category = activeCategory();
+    function openItemForm(item, owner) {
+      const category = owner || activeCategory();
+      if (!category) return;
+      formCategoryId = category.id;
       $("#itemModalTitle").textContent = item ? "Edit entry" : `New ${category.name}`;
       editingId.value = item?.id || "";
       itemName.value = item?.name || "";
       itemSubcategory.value = item?.subcategory || "";
       itemRating.value = item?.rating ?? 4;
       itemNotes.value = item?.notes || "";
+      pendingPhoto = item?.photo || "";
+      updatePhotoUI();
       ratingReadout.textContent = Number(itemRating.value).toFixed(2);
       itemDialog.showModal();
       requestAnimationFrame(() => itemName.focus());
@@ -669,7 +957,9 @@
       render();
     }
     function moveCategory(direction) {
-      const index = state.categories.findIndex((category) => category.id === activeCategory().id);
+      const active = activeCategory();
+      if (!active) return;
+      const index = state.categories.findIndex((category) => category.id === active.id);
       const nextIndex = index + direction;
       if (index < 0 || nextIndex < 0 || nextIndex >= state.categories.length) return;
       const [category] = state.categories.splice(index, 1);
@@ -680,13 +970,41 @@
     function deleteActiveCategory() {
       if (state.categories.length <= 1) return;
       const category = activeCategory();
+      if (!category) return;
       const confirmed = confirm(`Delete ${category.name} and its ${category.items.length} entries?`);
       if (!confirmed) return;
       const index = state.categories.findIndex((entry) => entry.id === category.id);
       state.categories.splice(index, 1);
       state.activeCategoryId = state.categories[Math.max(0, index - 1)].id;
+      if (lastDeleted?.categoryId === category.id) {
+        lastDeleted = null;
+        hideToast();
+      }
       save();
       render();
+    }
+    function deleteItem(owner, item) {
+      const index = owner.items.findIndex((entry) => entry.id === item.id);
+      if (index < 0) return;
+      owner.items.splice(index, 1);
+      lastDeleted = { categoryId: owner.id, item, index };
+      save();
+      render();
+      showToast(`Deleted ${item.name}`);
+    }
+    function showToast(text) {
+      $("#toastText").textContent = text;
+      toast.classList.add("show");
+      clearTimeout(undoTimer);
+      undoTimer = setTimeout(hideToast, 6000);
+    }
+    function hideToast() {
+      clearTimeout(undoTimer);
+      toast.classList.remove("show");
+    }
+    function openPhoto(item) {
+      $("#photoFull").src = item.photo;
+      photoDialog.showModal();
     }
     function foodMarks(rating) {
       const full = Math.round(rating);
@@ -697,12 +1015,20 @@
     }
     function renderTabs() {
       tabs.innerHTML = "";
-      const current = activeCategory();
+      if (!state.categories.length) return;
+      const totalCount = state.categories.reduce((count, category) => count + category.items.length, 0);
+      const allTab = document.createElement("button");
+      allTab.className = "tab";
+      allTab.type = "button";
+      allTab.ariaSelected = String(state.activeCategoryId === ALL_ID);
+      allTab.innerHTML = `<span>★ All</span><em>${totalCount}</em>`;
+      allTab.addEventListener("click", () => setCategory(ALL_ID));
+      tabs.append(allTab);
       state.categories.forEach((category) => {
         const button = document.createElement("button");
         button.className = "tab";
         button.type = "button";
-        button.ariaSelected = String(category.id === current.id);
+        button.ariaSelected = String(state.activeCategoryId !== ALL_ID && category.id === activeCategory()?.id);
         button.innerHTML = `<span></span><em>${category.items.length}</em>`;
         button.querySelector("span").textContent = category.name;
         button.addEventListener("click", () => setCategory(category.id));
@@ -714,28 +1040,63 @@
       $("#totalTried").textContent = items.length;
       $("#topScore").textContent = items.length ? Math.max(...items.map((item) => item.rating)).toFixed(2) : "-";
     }
+    function renderEmpty(title, message) {
+      const wrap = document.createElement("div");
+      wrap.className = "empty";
+      const inner = document.createElement("div");
+      const strong = document.createElement("strong");
+      strong.textContent = title;
+      const span = document.createElement("span");
+      span.textContent = message;
+      inner.append(strong, span);
+      wrap.append(inner);
+      list.append(wrap);
+    }
     function renderList() {
-      const category = activeCategory();
-      sortItems(category);
-      $("#activeTitle").textContent = category.name;
-      const categoryIndex = state.categories.findIndex((entry) => entry.id === category.id);
-      $("#moveCategoryLeft").disabled = categoryIndex <= 0;
-      $("#moveCategoryRight").disabled = categoryIndex === state.categories.length - 1;
-      $("#deleteCategory").disabled = state.categories.length <= 1;
+      const isAll = state.activeCategoryId === ALL_ID && state.categories.length > 0;
+      const category = isAll ? null : activeCategory();
+      $("#activeTitle").textContent = isAll ? "Every ranking" : (category ? category.name : "No categories");
+      const categoryIndex = category ? state.categories.findIndex((entry) => entry.id === category.id) : -1;
+      $("#moveCategoryLeft").disabled = !category || categoryIndex <= 0;
+      $("#moveCategoryRight").disabled = !category || categoryIndex === state.categories.length - 1;
+      $("#deleteCategory").disabled = !category || state.categories.length <= 1;
+      $("#openItem").disabled = !category;
+      const query = searchInput.value.trim().toLowerCase();
+      let entries = isAll
+        ? state.categories.flatMap((owner) => owner.items.map((item) => ({ item, owner })))
+        : (category ? category.items.map((item) => ({ item, owner: category })) : []);
+      entries = sortedEntries(entries);
+      if (query) {
+        entries = entries.filter(({ item, owner }) =>
+          [item.name, item.subcategory, item.notes, isAll ? owner.name : ""].join(" ").toLowerCase().includes(query)
+        );
+      }
       list.innerHTML = "";
-      if (!category.items.length) {
-        list.innerHTML = `<div class="empty"><div><strong>No entries yet</strong><span>Add the first ${category.name.toLowerCase()} and it will rank automatically.</span></div></div>`;
+      if (!entries.length) {
+        if (!state.categories.length) {
+          renderEmpty("Start your gazette", "Create a category with + Category, then log your first food.");
+        } else if (query) {
+          renderEmpty("No matches", `Nothing here matches "${searchInput.value.trim()}".`);
+        } else if (isAll) {
+          renderEmpty("No entries yet", "Log a food in any category and it will rank here.");
+        } else {
+          renderEmpty("No entries yet", `Add the first ${category.name.toLowerCase()} and it will rank automatically.`);
+        }
         return;
       }
-      category.items.forEach((item, index) => {
+      entries.forEach(({ item, owner }, index) => {
         const row = document.createElement("article");
         row.className = "item";
         row.innerHTML = `
           <div class="rank">${index + 1}</div>
-          <div>
-            <h3 class="name"></h3>
-            ${item.subcategory ? '<div class="subcat"></div>' : ''}
-            ${item.notes ? '<p class="note"></p>' : ''}
+          <div class="itembody">
+            ${item.photo ? '<img class="thumb" alt="" loading="lazy" decoding="async">' : ''}
+            <div class="text">
+              <h3 class="name"></h3>
+              ${isAll ? '<div class="cattag"></div>' : ''}
+              ${item.subcategory ? '<div class="subcat"></div>' : ''}
+              ${item.notes ? '<p class="note"></p>' : ''}
+            </div>
           </div>
           <div class="scorebox">
             <div class="score">${item.rating.toFixed(2)}</div>
@@ -750,25 +1111,35 @@
             </button>
           </div>`;
         row.querySelector(".name").textContent = item.name;
+        const thumb = row.querySelector(".thumb");
+        if (thumb) {
+          thumb.src = item.photo;
+          thumb.addEventListener("click", () => openPhoto(item));
+        }
+        const cattag = row.querySelector(".cattag");
+        if (cattag) cattag.textContent = owner.name;
         const subcat = row.querySelector(".subcat");
         if (subcat) subcat.textContent = item.subcategory;
         const note = row.querySelector(".note");
         if (note) note.textContent = item.notes;
-        row.querySelector(".edit").addEventListener("click", () => openItemForm(item));
-        row.querySelector(".remove").addEventListener("click", () => {
-          category.items = category.items.filter((entry) => entry.id !== item.id);
-          save();
-          render();
-        });
+        row.querySelector(".edit").addEventListener("click", () => openItemForm(item, owner));
+        row.querySelector(".remove").addEventListener("click", () => deleteItem(owner, item));
         list.append(row);
       });
     }
     function render() {
+      document.querySelectorAll(".sorter").forEach((button) => {
+        button.setAttribute("aria-pressed", String(button.dataset.sort === state.sortMode));
+      });
       renderTabs();
       renderStats();
       renderList();
     }
     render();
+
+    if ("serviceWorker" in navigator && location.protocol !== "file:") {
+      navigator.serviceWorker.register("./sw.js").catch(() => {});
+    }
   </script>
 </body>
 </html>
