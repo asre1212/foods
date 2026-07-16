@@ -580,12 +580,17 @@
       </div>
       <div class="settings-row">
         <div class="settings-title">Export backup</div>
-        <div class="settings-desc">Download a JSON backup of all categories and rankings.</div>
+        <div class="settings-desc">Download a small JSON backup of all categories and rankings. Photos are exported separately below.</div>
         <button class="btn" id="exportData" type="button">Download JSON</button>
       </div>
       <div class="settings-row">
-        <div class="settings-title">Import backup</div>
-        <div class="settings-desc">Replace current data with a previously exported JSON file.</div>
+        <div class="settings-title">Export photo pack</div>
+        <div class="settings-desc">Download your photos as a separate file so the main backup stays small.</div>
+        <button class="btn" id="exportPhotos" type="button">Download Photos</button>
+      </div>
+      <div class="settings-row">
+        <div class="settings-title">Import backup or photo pack</div>
+        <div class="settings-desc">A backup replaces current data (photos already on this device are kept for matching entries). A photo pack adds photos to matching entries.</div>
         <input class="file-input" id="importFile" type="file" accept="application/json,.json">
         <button class="btn secondary" id="chooseImport" type="button">Choose File</button>
       </div>
@@ -611,6 +616,7 @@
     <button id="toastUndo" type="button">Undo</button>
   </div>
 
+  <script src="./photo-sync.js"></script>
   <script>
     const STORAGE_KEY = "taste-gazette-v2";
     const ALL_ID = "__all__";
@@ -768,14 +774,32 @@
     });
 
     $("#exportData").addEventListener("click", () => {
-      const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
+      const core = window.PhotoSync ? PhotoSync.stripPhotos(state) : state;
+      downloadJSON(core, `taste-gazette-${new Date().toISOString().slice(0, 10)}.json`);
+    });
+
+    $("#exportPhotos").addEventListener("click", () => {
+      if (!window.PhotoSync) {
+        alert("Photo sync is unavailable. Try Hard Update to fetch the newest files.");
+        return;
+      }
+      const pack = PhotoSync.buildPhotoPack(state);
+      if (!pack.count) {
+        alert("No photos to export yet. Add photos to your entries first.");
+        return;
+      }
+      downloadJSON(pack, `taste-gazette-photos-${new Date().toISOString().slice(0, 10)}.json`);
+    });
+
+    function downloadJSON(data, filename) {
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
-      link.download = `taste-gazette-${new Date().toISOString().slice(0, 10)}.json`;
+      link.download = filename;
       link.click();
       URL.revokeObjectURL(url);
-    });
+    }
 
     $("#hardUpdate").addEventListener("click", async () => {
       if ("serviceWorker" in navigator) {
@@ -796,16 +820,30 @@
       const file = event.target.files[0];
       event.target.value = "";
       if (!file) return;
-      let imported = null;
+      let raw = null;
       try {
-        imported = normalize(JSON.parse(await file.text()));
+        raw = JSON.parse(await file.text());
       } catch (error) {
         console.warn("Import could not be parsed.", error);
       }
-      if (!imported) {
-        alert("That file is not a valid Taste Gazette backup.");
+      if (window.PhotoSync && PhotoSync.isPhotoPack(raw)) {
+        const applied = PhotoSync.applyPhotoPack(state, raw);
+        if (!applied) {
+          alert("No entries here match that photo pack. Import the matching backup first, then the photo pack.");
+          return;
+        }
+        save();
+        settingsDialog.close();
+        render();
+        showToast(`Added ${applied} photo${applied === 1 ? "" : "s"}`);
         return;
       }
+      const imported = normalize(raw);
+      if (!imported) {
+        alert("That file is not a valid Taste Gazette backup or photo pack.");
+        return;
+      }
+      if (window.PhotoSync) PhotoSync.carryOverPhotos(imported, state);
       state = imported;
       save();
       settingsDialog.close();
