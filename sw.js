@@ -1,9 +1,9 @@
-const CACHE = "taste-gazette-v1";
+const CACHE = "taste-gazette-v2";
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
     caches.open(CACHE)
-      .then((cache) => cache.addAll(["./", "./index.html"]))
+      .then((cache) => cache.addAll(["./", "./index.html", "./photo-sync.js"]))
       .then(() => self.skipWaiting())
   );
 });
